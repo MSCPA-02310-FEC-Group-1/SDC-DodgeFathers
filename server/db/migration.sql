@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS club;
+
 CREATE TABLE club (
     id SERIAL PRIMARY KEY,
     image_urls JSON NOT NULL,
