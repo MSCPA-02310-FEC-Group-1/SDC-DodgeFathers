@@ -12,6 +12,7 @@ const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     limit: 15
 })
+
 // const slowLimiter = slowDown({
 //     windowMs: 15 * 60 * 1000,
 //     delayAfter: 10,
@@ -29,7 +30,7 @@ app.use(express.static('public'));
 app.use(express.json());
 app.use(cors());
 app.use(morgan('dev'));
-app.use(limiter)
+// app.use(limiter)
 // app.use(slowLimiter)
 
 // METHODS -------

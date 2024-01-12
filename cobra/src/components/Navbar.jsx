@@ -26,13 +26,14 @@ function debounce(func, wait = 10, immediate = true) {
 
 
 
-export default function Navbar({clubData}) {
+export default function Navbar({clubData, setPageId}) {
     const [isVisible, setIsVisible] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
     const [sidebarOpen, setSidebarOpen] = useState(false); // New state for sidebar
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [dropdownContent, setDropdownContent] = useState('');
     const [airX, setAirX] = useState(false)
+
     
 
     const handleScroll = debounce(() => {
@@ -125,8 +126,8 @@ export default function Navbar({clubData}) {
                                 isVisible={dropdownVisible} 
                                 content={dropdownContent} 
                                 onClose={handleCloseDropdown} 
-                                clubData={clubData}
                                 setAirX={setAirX}
+                                setPageId={setPageId}
                                 airX={airX}
                             />
                         </div>

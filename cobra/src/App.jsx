@@ -26,6 +26,8 @@ function App() {
   const [count, setCount] = useState(0)
   const [productModal, setProductModal] = useState([]);
   const [clubData, setClubData] = useState([])
+  const [singleClubData, setSingleClubData] = useState(null)
+  const [pageId, setPageId] = useState(1);
 
   const toggleModal = (images) => {
     if (productModal.length === 0) {
@@ -40,21 +42,47 @@ function App() {
       try {
         const res = await axios.get('http://localhost:3000/api')
         setClubData(res.data)
-      } catch {
+      } catch (error) {
         console.error(`Error fetching data:`, error)
       }
     }
-    fetchData()
+
+    const fetchSingleData = async () => {
+      try {
+        const res = await axios.get(`http://localhost:3000/api/${pageId}`)
+        setSingleClubData(res.data)
+      } catch (error){
+        console.error(`Error fetching data:`, error)
+      }
+    }
+
+    // fetchData()
+    fetchSingleData()
   },[])
 
+  //on pageid changes
+  useEffect(() => {
+    const fetchSingleData = async () => {
+      try {
+        const res = await axios.get(`http://localhost:3000/api/${pageId}`)
+        setSingleClubData(res.data)
+      } catch (error){
+        console.error(`Error fetching data:`, error)
+      }
+    }
+    fetchSingleData();
+  }, [pageId])
+
+
+  console.log('app.jsx',singleClubData)
 
 
   return (
     <>
             <>
                 <Header />
-                <Navbar clubData={clubData}/>
-                <Product clubData={clubData}/>
+                <Navbar setPageId={setPageId}/>
+                <Product singleClubData={singleClubData}/>
                 <FactOne />
                 <FactTwo/>
                 <FactThree/>

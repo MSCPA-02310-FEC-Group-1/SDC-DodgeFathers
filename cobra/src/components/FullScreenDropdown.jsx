@@ -1,6 +1,6 @@
 import Product from "./Product";
 import { useEffect, useState } from "react";
-function FullScreenDropdown({ isVisible, content, onClose, clubData, airX, setAirX }) {
+function FullScreenDropdown({ setPageId, isVisible, content, onClose, airX, setAirX }) {
     if (!isVisible) {
         return null;
     }
@@ -12,11 +12,10 @@ function FullScreenDropdown({ isVisible, content, onClose, clubData, airX, setAi
         }
     }
 
-
-
-    
-
-    console.log(clubData[0])
+    const pageChangeHandler = (golfId) => {
+        setPageId(golfId)
+        console.log('clicked changeId:', golfId)
+    }
 
     let displayContent;
     switch (content) {
@@ -30,9 +29,12 @@ function FullScreenDropdown({ isVisible, content, onClose, clubData, airX, setAi
                             onClick={() => {
                                 setAirX(true)
                                 console.log(true)
+                                pageChangeHandler(1)
                             }}
                              className="text-slate-400 hover:text-black cursor-pointer">AIR-X</a></li>
-                            <li className="py-2"><a href='https://www.cobragolf.com/pages/aerojet' className="text-slate-400 hover:text-black cursor-pointer">AEROJET</a></li>
+                            <li className="py-2"><a 
+                                onClick={() => {pageChangeHandler(3)}} 
+                                className="text-slate-400 hover:text-black cursor-pointer">AEROJET</a></li>
                             <li className="py-2"><a href='https://www.cobragolf.com/pages/snakebite' className="text-slate-400 hover:text-black cursor-pointer">SNAKEBITE Wedges</a></li>
                             <li className="py-2"><a href='https://www.cobragolf.com/pages/50th-anniversary' className="text-slate-400 hover:text-black cursor-pointer">50th Anniversary</a></li>
                             <li className="py-2"><a href='https://www.cobragolf.com/pages/king-irons' className="text-slate-400 hover:text-black cursor-pointer">KING Irons</a></li>
