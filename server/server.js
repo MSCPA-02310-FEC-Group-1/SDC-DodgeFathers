@@ -1,10 +1,22 @@
 import express from 'express';
+import rateLimit from 'express-rate-limit';
+import slowDown from 'express-slow-down';
 import pg from 'pg';
 import cors from 'cors';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 
 dotenv.config();
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 15
+})
+// const slowLimiter = slowDown({
+//     windowMs: 15 * 60 * 1000,
+//     delayAfter: 10,
+//     delayMs: (hits) => hits * hits * 1000
+// })
 
 const PORT = process.env.PORT;
 const URL = '/api';
@@ -17,6 +29,8 @@ app.use(express.static('public'));
 app.use(express.json());
 app.use(cors());
 app.use(morgan('dev'));
+app.use(limiter)
+// app.use(slowLimiter)
 
 // METHODS -------
 

@@ -1,4 +1,6 @@
-function FullScreenDropdown({ isVisible, content, onClose }) {
+import Product from "./Product";
+import { useEffect, useState } from "react";
+function FullScreenDropdown({ isVisible, content, onClose, clubData, airX, setAirX }) {
     if (!isVisible) {
         return null;
     }
@@ -10,6 +12,12 @@ function FullScreenDropdown({ isVisible, content, onClose }) {
         }
     }
 
+
+
+    
+
+    console.log(clubData[0])
+
     let displayContent;
     switch (content) {
         case 'Clubs':
@@ -18,7 +26,12 @@ function FullScreenDropdown({ isVisible, content, onClose }) {
                     <ul className="w-[342px] mx-2">
                         <li className="py-2"><a href='https://www.cobragolf.com/collections/golf-clubs' className="text-slate-600 hover:text-black cursor-pointer font-titillium font-semibold">Featured</a></li>
                         <ul className="border-t-2 border-black">
-                            <li className="py-2"><a href='https://www.cobragolf.com/collections/air-x' className="text-slate-400 hover:text-black cursor-pointer">AIR-X</a></li>
+                            <li className="py-2"><a 
+                            onClick={() => {
+                                setAirX(true)
+                                console.log(true)
+                            }}
+                             className="text-slate-400 hover:text-black cursor-pointer">AIR-X</a></li>
                             <li className="py-2"><a href='https://www.cobragolf.com/pages/aerojet' className="text-slate-400 hover:text-black cursor-pointer">AEROJET</a></li>
                             <li className="py-2"><a href='https://www.cobragolf.com/pages/snakebite' className="text-slate-400 hover:text-black cursor-pointer">SNAKEBITE Wedges</a></li>
                             <li className="py-2"><a href='https://www.cobragolf.com/pages/50th-anniversary' className="text-slate-400 hover:text-black cursor-pointer">50th Anniversary</a></li>
@@ -129,13 +142,23 @@ function FullScreenDropdown({ isVisible, content, onClose }) {
             break;
     }
 
-    return (
-        <div className="fixed inset-x-0 top-0 mt-[100px] pt-4 border-b-2 bg-white z-50" onClick={handleOutsideClick}>
-            <div>
-                {displayContent}
+    if (!airX) {
+        return (
+            <div className="fixed inset-x-0 top-0 mt-[100px] pt-4 border-b-2 bg-white z-50" onClick={handleOutsideClick}>
+                <div>
+                    {displayContent}
+                </div>
             </div>
-        </div>
-    );
+        );
+    } else {
+        return (
+            <div className="fixed inset-x-0 top-0 mt-[100px] pt-4 border-b-2 bg-white z-50" onClick={handleOutsideClick}>
+                <div>
+                    <Product />
+                </div>
+            </div>
+        );
+    }
 }
 
 export default FullScreenDropdown;
