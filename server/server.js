@@ -3,6 +3,7 @@ import rateLimit from 'express-rate-limit';
 import slowDown from 'express-slow-down';
 import pg from 'pg';
 import cors from 'cors';
+import morgan from 'morgan';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -27,6 +28,7 @@ const app = express();
 app.use(express.static('public'));
 app.use(express.json());
 app.use(cors());
+app.use(morgan('dev'));
 app.use(limiter)
 // app.use(slowLimiter)
 
