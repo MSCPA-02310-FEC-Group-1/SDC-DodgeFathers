@@ -61,7 +61,7 @@ app.get(`${URL}/:id`, async (req, res, next) => {
 //CREATE
 app.post(`${URL}`, async (req, res, next) => {
     try {
-        const { image_urls, title, price, sale_price, hand, loft, custom_options } = req.body;
+        const { image_urls, title, price, sale_price, left_hand, loft, custom_options } = req.body;
         //TODO: create error handling as applicable
         /* if (!XXXXXX) {
             const error = new Error('Not found');
@@ -69,8 +69,8 @@ app.post(`${URL}`, async (req, res, next) => {
             throw error;
         } */
         const result = await pool.query(
-            `INSERT INTO club (image_urls, title, price, sale_price, hand, loft, custom_options) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-            [image_urls, title, price, sale_price, hand, loft, custom_options]
+            `INSERT INTO club (image_urls, title, price, sale_price, left_hand, loft, custom_options) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+            [image_urls, title, price, sale_price, left_hand, loft, custom_options]
         )
         res.status(201).send(result.rows);
     }
@@ -88,9 +88,9 @@ app.patch(`${URL}/:id`, async (req, res, next) => {
             error.status = 404;
             throw(error);
         }
-        const { image_urls, title, price, sale_price, hand, loft, custom_options } = req.body;
+        const { image_urls, title, price, sale_price, left_hand, loft, custom_options } = req.body;
         const result = await pool.query(
-            `UPDATE club SET image_urls = $1, title = $2, price = $3, sale_price = $4, hand = $5, loft = $6, custom_options =$7 WHERE id = $8 RETURNING *`, 
+            `UPDATE club SET image_urls = $1, title = $2, price = $3, sale_price = $4, left_hand = $5, loft = $6, custom_options =$7 WHERE id = $8 RETURNING *`, 
             [id]
         );
         res.status(200).send(result.rows);
