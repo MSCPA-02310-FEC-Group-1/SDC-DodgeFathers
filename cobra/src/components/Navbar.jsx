@@ -7,6 +7,7 @@ import FullScreenDropdown from './FullScreenDropdown';
 
 
 
+
 function debounce(func, wait = 10, immediate = true) {
     let timeout;
     return function() {
@@ -25,13 +26,14 @@ function debounce(func, wait = 10, immediate = true) {
 
 
 
-export default function Navbar() {
+export default function Navbar({clubData}) {
     const [isVisible, setIsVisible] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
     const [sidebarOpen, setSidebarOpen] = useState(false); // New state for sidebar
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [dropdownContent, setDropdownContent] = useState('');
-
+    const [airX, setAirX] = useState(false)
+    
 
     const handleScroll = debounce(() => {
         const currentScrollY = window.scrollY;
@@ -106,7 +108,12 @@ export default function Navbar() {
                         <div className="navbar-center hidden lg:flex justify-center w-3/5">
                             <ul className="menu-horizontal custom-navbar">
                             {/* Navbar menu content here */}
-                            <li><a onClick={() => handleLinkClick('Clubs')} className="text-base text-black ml-12 cursor-pointer font-titillium font-semibold">Clubs</a></li>
+                            <li><a onClick={() => { handleLinkClick('Clubs'), setAirX(false)}} 
+                            className="text-base text-black ml-12 cursor-pointer font-titillium font-semibold"
+                            onMouseOver={() => {
+                                setAirX(false)
+                            }}
+                            >Clubs</a></li>
                             <li><a onClick={() => handleLinkClick('Accessories')} className="text-base text-black mx-2 cursor-pointer font-titillium font-semibold px-4">Accessories</a></li>
                             <li><a href='https://www.cobragolf.com/pages/arccos-caddie' className="text-base text-black mx-2 cursor-pointer font-titillium font-semibold px-4">Arccos Caddie</a></li>
                             <li><a onClick={() => handleLinkClick('Custom Fitting')} className="text-base text-black mx-2 cursor-pointer font-titillium font-semibold px-4">Custom Fitting</a></li>
@@ -118,6 +125,9 @@ export default function Navbar() {
                                 isVisible={dropdownVisible} 
                                 content={dropdownContent} 
                                 onClose={handleCloseDropdown} 
+                                clubData={clubData}
+                                setAirX={setAirX}
+                                airX={airX}
                             />
                         </div>
                         <div className="navbar-end flex justify-end w-1/5">

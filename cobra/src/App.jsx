@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Header from './components/Header'
 import Navbar from './components/Navbar'
 import Product from './components/Product'
@@ -19,11 +19,13 @@ import TabComponent from './components/ReviewQuestionDisplay'
 import Footer from './components/Footer'
 import Klarna from './components/Klarna'
 import Chat from './components/Chat'
+import axios from 'axios'
 import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
   const [productModal, setProductModal] = useState([]);
+  const [clubData, setClubData] = useState([])
 
   const toggleModal = (images) => {
     if (productModal.length === 0) {
@@ -33,12 +35,26 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get('http://localhost:3000/api')
+        setClubData(res.data)
+      } catch {
+        console.error(`Error fetching data:`, error)
+      }
+    }
+    fetchData()
+  },[])
+
+
+
   return (
     <>
             <>
                 <Header />
-                <Navbar />
-                <Product />
+                <Navbar clubData={clubData}/>
+                <Product clubData={clubData}/>
                 <FactOne />
                 <FactTwo/>
                 <FactThree/>
