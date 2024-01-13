@@ -10,8 +10,7 @@ import NodeCache from 'node-cache';
 dotenv.config();
 
 const limiter = rateLimit({
-    // windowMs: 15 * 60 * 1000,
-    windowMs: 0,
+    windowMs: 15 * 60 * 1000,
     limit: 15
 })
 // const slowLimiter = slowDown({
