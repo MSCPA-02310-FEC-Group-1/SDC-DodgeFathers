@@ -30,10 +30,11 @@ function FullScreenDropdown({ setPageId, isVisible, content, onClose, airX, setA
                                 setAirX(true)
                                 console.log(true)
                                 pageChangeHandler(1)
-                            }}
+                                
+                            }} href="#"
                              className="text-slate-400 hover:text-black cursor-pointer">AIR-X</a></li>
                             <li className="py-2"><a 
-                                onClick={() => {pageChangeHandler(3)}} 
+                                onClick={() => {pageChangeHandler(3)}} href="#" 
                                 className="text-slate-400 hover:text-black cursor-pointer">AEROJET</a></li>
                             <li className="py-2"><a href='https://www.cobragolf.com/pages/snakebite' className="text-slate-400 hover:text-black cursor-pointer">SNAKEBITE Wedges</a></li>
                             <li className="py-2"><a href='https://www.cobragolf.com/pages/50th-anniversary' className="text-slate-400 hover:text-black cursor-pointer">50th Anniversary</a></li>
@@ -144,19 +145,11 @@ function FullScreenDropdown({ setPageId, isVisible, content, onClose, airX, setA
             break;
     }
 
-    if (!airX) {
+    {
         return (
             <div className="fixed inset-x-0 top-0 mt-[100px] pt-4 border-b-2 bg-white z-50" onClick={handleOutsideClick}>
                 <div>
                     {displayContent}
-                </div>
-            </div>
-        );
-    } else {
-        return (
-            <div className="fixed inset-x-0 top-0 mt-[100px] pt-4 border-b-2 bg-white z-50" onClick={handleOutsideClick}>
-                <div>
-                    <Product />
                 </div>
             </div>
         );

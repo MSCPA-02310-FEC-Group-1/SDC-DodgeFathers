@@ -5,8 +5,8 @@ import { ZoomIcon } from './ZoomIcon';
 export default function ProductImages({ singleClubData, selectedImage, toggleModal }) {
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-    
-    console.log(singleClubData)
+    //for checking if data is null : Optional chaining
+    const imageLinks = singleClubData?.[0]?.image_urls || []
 
     useEffect(() => {
         const handleResize = () => {

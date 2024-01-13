@@ -1,7 +1,3 @@
-
-// SDC Team: Refer to ..assets/custom_club.js for schema
-
-
 import React, { useState, useEffect } from 'react';
 // import CobraClub from '../assets/cobra-club.js'
 import CustomClub from './CustomClub'
@@ -14,14 +10,11 @@ const ProductDetails = ({singleClubData}) => {
     const [isSoldOut, setSoldOut] = useState(false);
     const [learnMore, setLearnMore] = useState(false)
 
-    // const {customOptions, 
-    //         loft, 
-    //         price, 
-    //         sale_price, 
-    //         title} = singleClubData
-
-    console.log('productDetails, single',singleClubData)
-
+    const {custom_options, 
+            loft, 
+            price, 
+            sale_price, 
+            title} = singleClubData[0]
 
     
 
@@ -95,7 +88,7 @@ const ProductDetails = ({singleClubData}) => {
                             <option className='bg-white text-black' disabled selected>
                             Choose an Option
                             </option>
-                            {customOptions.ShaftFlex.map((option, index) => (
+                            {custom_options.ShaftFlex.map((option, index) => (
                             <option className='bg-white text-black' key={index} value={option.value} disabled={option.disabled}>{option.value}</option>
                             ))}
                         </select>

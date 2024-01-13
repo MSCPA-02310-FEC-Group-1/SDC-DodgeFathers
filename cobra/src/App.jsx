@@ -23,8 +23,8 @@ import axios from 'axios'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
   const [productModal, setProductModal] = useState([]);
+  const [isLoading, setIsLoadidng] = useState(true)
   const [clubData, setClubData] = useState([])
   const [singleClubData, setSingleClubData] = useState(null)
   const [pageId, setPageId] = useState(1);
@@ -58,6 +58,7 @@ function App() {
 
     // fetchData()
     fetchSingleData()
+    setIsLoadidng(false)
   },[])
 
   //on pageid changes
@@ -71,35 +72,38 @@ function App() {
       }
     }
     fetchSingleData();
+    setIsLoadidng(false)
   }, [pageId])
 
 
   console.log('app.jsx',singleClubData)
 
+  if(isLoading){
+    return(<h1>Loading</h1>)
+  }
+  
 
   return (
     <>
-            <>
-                <Header />
-                <Navbar setPageId={setPageId}/>
-                <Product singleClubData={singleClubData}/>
-                <FactOne />
-                <FactTwo/>
-                <FactThree/>
-                <Fact4 />
-                <Carousel />
-                <Ad />
-                <TechOverview />
-                <Specifications />
-                <ShaftSpecs />
-                <GripSpecs />
-                <RelatedProducts/>
-                <RecentlyViewed />
-                <ReviewHeader />
-                <Footer />
-                <Chat />
-                <Klarna/>
-            </>
+        <Header />
+        <Navbar setPageId={setPageId}/>
+        <Product singleClubData={singleClubData}/>
+        <FactOne />
+        <FactTwo/>
+        <FactThree/>
+        <Fact4 />
+        <Carousel />
+        <Ad />
+        <TechOverview />
+        <Specifications />
+        <ShaftSpecs />
+        <GripSpecs />
+        <RelatedProducts/>
+        <RecentlyViewed />
+        <ReviewHeader />
+        <Footer />
+        <Chat />
+        <Klarna/>
     </>
   );
 }
