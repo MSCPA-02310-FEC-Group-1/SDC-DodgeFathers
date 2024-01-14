@@ -40,10 +40,10 @@ const cacheware = (req,res,next) => {
     const cacheData = cache.get(req.url);
 
     if(cacheData){ 
-        console.log(`sending cache ${reqUrl}`)
+        console.log(`sending cache ${req.url}`)
         return res.json(cacheData)
     }
-    console.log(`creating ${reqUrl} cache`)
+    console.log(`creating ${req.url} cache`)
     next()
 }
 
