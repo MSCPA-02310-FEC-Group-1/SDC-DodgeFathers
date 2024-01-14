@@ -143,6 +143,8 @@ app.delete(`${URL}/:id`, async (req, res, next) => {
 
 //ERROR handling
 app.use((error, req, res, next) => {
+    console.error(error);
+    const statusCode = error.status || 500;
     res.status(error.status).send({error: error.message});
 })
 
