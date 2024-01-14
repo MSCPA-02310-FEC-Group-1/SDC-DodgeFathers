@@ -9,8 +9,9 @@ import NodeCache from 'node-cache';
 
 dotenv.config();
 
+// 300 requests per 2min
 const limiter = rateLimit({
-    windowMs: 5 * 60 * 1000,
+    windowMs: 2 * 60 * 1000,
     limit: 300
 })
 
