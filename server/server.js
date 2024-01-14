@@ -10,8 +10,8 @@ import NodeCache from 'node-cache';
 dotenv.config();
 
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    limit: 15
+    windowMs: 5 * 60 * 1000,
+    limit: 300
 })
 
 // const slowLimiter = slowDown({
@@ -55,7 +55,7 @@ app.get(`${URL}`, cacheware, async (req, res, next) => {
         const result = await pool.query(
             'SELECT * FROM club'
         );
-        cache.set(URL,result,300)
+        cache.set(URL,result.rows,300)
         res.status(200).send(result.rows);
     }
     catch (error) {
@@ -82,7 +82,7 @@ app.get(`${URL}/:id`, cacheware, async (req, res, next) => {
             error.status = 404;
             throw error;
         }
-        cache.set(req.url,result,300)
+        cache.set(req.url,result.rows,300)
         res.status(200).send(result.rows);
     }
     catch (error) {
