@@ -5,6 +5,7 @@ import pg from 'pg';
 import cors from 'cors';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import NodeCache from 'node-cache';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ const pool = new Pool({
     connectionString: process.env.DATABASE_URL
 });
 const app = express();
+const cache = new NodeCache();
 app.use(express.static('public'));
 app.use(express.json());
 app.use(cors());
@@ -33,14 +35,26 @@ app.use(limiter)
 // app.use(slowLimiter)
 
 // METHODS -------
+// Cache middleware
+const cacheware = (req,res,next) => {
+    const cacheData = cache.get(req.url);
+
+    if(cacheData){ 
+        console.log(`sending cache ${reqUrl}`)
+        return res.json(cacheData)
+    }
+    console.log(`creating ${reqUrl} cache`)
+    next()
+}
 
 
 //GET ALL
-app.get(`${URL}`, async (req, res, next) => {
+app.get(`${URL}`, cacheware, async (req, res, next) => {
     try {
         const result = await pool.query(
             'SELECT * FROM club'
         );
+        cache.set(URL,result,300)
         res.status(200).send(result.rows);
     }
     catch (error) {
@@ -49,7 +63,7 @@ app.get(`${URL}`, async (req, res, next) => {
 })
 
 //GET ONE
-app.get(`${URL}/:id`, async (req, res, next) => {
+app.get(`${URL}/:id`, cacheware, async (req, res, next) => {
     try {
         const id = parseInt(req.params.id);
         console.log(id);
@@ -67,6 +81,7 @@ app.get(`${URL}/:id`, async (req, res, next) => {
             error.status = 404;
             throw error;
         }
+        cache.set(req.url,result,300)
         res.status(200).send(result.rows);
     }
     catch (error) {
