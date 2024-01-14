@@ -40,10 +40,10 @@ const cacheware = (req,res,next) => {
     const cacheData = cache.get(req.url);
 
     if(cacheData){ 
-        console.log(`sending cache ${reqUrl}`)
+        console.log(`sending cache ${req.url}`)
         return res.json(cacheData)
     }
-    console.log(`creating ${reqUrl} cache`)
+    console.log(`creating ${req.url} cache`)
     next()
 }
 
@@ -158,6 +158,8 @@ app.delete(`${URL}/:id`, async (req, res, next) => {
 
 //ERROR handling
 app.use((error, req, res, next) => {
+    console.error(error);
+    const statusCode = error.status || 500;
     res.status(error.status).send({error: error.message});
 })
 
