@@ -1,9 +1,15 @@
 import ProductImages from './ProductImages'
 import ProductModal from './ProductModal'
 import ProductDetails from './ProductDetails'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
-export default function Product({clubData}) {
+ const Product = ({ singleClubData }) => {
+
+    //something causes the page to crash below if singleClubData doesn't exist. no time to troubleshoot, but this solves it for now.
+    if (!singleClubData) {
+        return <div>Loading...</div>;
+    }
+    
     const [productModal, setProductModal] = useState([]);
     const [selectedImage, setSelectedImage] = useState(null);
    
@@ -14,9 +20,7 @@ export default function Product({clubData}) {
         } else {
             setProductModal([]);
         }
-    };
-
-    console.log(clubData)
+    }
 
 
     return (
@@ -24,8 +28,8 @@ export default function Product({clubData}) {
             <div className={'product-container flex justify-center mt-10'}>
                 <div className="flex flex-col w-2/3 justify-center m-0 overflow-hidden ">
                     <div className="flex flex-wrap justify-center m-0  overflow-hidden">
-                        <ProductImages clubData={clubData} selectedImage={selectedImage} toggleModal={toggleModal} />
-                        <ProductDetails clubData={clubData}/>
+                        <ProductImages singleClubData={singleClubData} selectedImage={selectedImage} toggleModal={toggleModal} />
+                        <ProductDetails singleClubData={singleClubData}/>
                     </div>
                     <div className="flex flex-row h-28 w-1/2 gap-36 items-center self-start">
                         <p className="font-bold mt-10">
@@ -44,3 +48,5 @@ export default function Product({clubData}) {
         </>
     );
 }
+
+export default Product;

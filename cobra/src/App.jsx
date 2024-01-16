@@ -23,9 +23,11 @@ import axios from 'axios'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
   const [productModal, setProductModal] = useState([]);
+  const [isLoading, setIsLoadidng] = useState(true)
   const [clubData, setClubData] = useState([])
+  const [singleClubData, setSingleClubData] = useState(null)
+  const [pageId, setPageId] = useState(1);
 
   const toggleModal = (images) => {
     if (productModal.length === 0) {
@@ -40,38 +42,68 @@ function App() {
       try {
         const res = await axios.get('http://localhost:3000/api')
         setClubData(res.data)
-      } catch {
+      } catch (error) {
         console.error(`Error fetching data:`, error)
       }
     }
-    fetchData()
+
+    const fetchSingleData = async () => {
+      try {
+        const res = await axios.get(`http://localhost:3000/api/${pageId}`)
+        setSingleClubData(res.data)
+      } catch (error){
+        console.error(`Error fetching data:`, error)
+      }
+    }
+
+    // fetchData()
+    fetchSingleData()
+    setIsLoadidng(false)
   },[])
 
+  //on pageid changes
+  useEffect(() => {
+    const fetchSingleData = async () => {
+      try {
+        const res = await axios.get(`http://localhost:3000/api/${pageId}`)
+        setSingleClubData(res.data)
+      } catch (error){
+        console.error(`Error fetching data:`, error)
+      }
+    }
+    fetchSingleData();
+    setIsLoadidng(false)
+  }, [pageId])
 
+
+  console.log('app.jsx',singleClubData)
+
+  if(isLoading){
+    return(<h1>Loading</h1>)
+  }
+  
 
   return (
     <>
-            <>
-                <Header />
-                <Navbar clubData={clubData}/>
-                <Product clubData={clubData}/>
-                <FactOne />
-                <FactTwo/>
-                <FactThree/>
-                <Fact4 />
-                <Carousel />
-                <Ad />
-                <TechOverview />
-                <Specifications />
-                <ShaftSpecs />
-                <GripSpecs />
-                <RelatedProducts/>
-                <RecentlyViewed />
-                <ReviewHeader />
-                <Footer />
-                <Chat />
-                <Klarna/>
-            </>
+        <Header />
+        <Navbar setPageId={setPageId}/>
+        <Product singleClubData={singleClubData}/>
+        <FactOne />
+        <FactTwo/>
+        <FactThree/>
+        <Fact4 />
+        <Carousel />
+        <Ad />
+        <TechOverview />
+        <Specifications />
+        <ShaftSpecs />
+        <GripSpecs />
+        <RelatedProducts/>
+        <RecentlyViewed />
+        <ReviewHeader />
+        <Footer />
+        <Chat />
+        <Klarna/>
     </>
   );
 }
