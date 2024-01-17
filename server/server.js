@@ -5,13 +5,15 @@ import pg from 'pg';
 import cors from 'cors';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import cluster from 'cluster';
+import os from 'os';
 
 dotenv.config();
 
-const limiter = rateLimit({
+/* const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     limit: 15
-})
+}) */
 // const slowLimiter = slowDown({
 //     windowMs: 15 * 60 * 1000,
 //     delayAfter: 10,
@@ -24,130 +26,147 @@ const { Pool } = pg;
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL
 });
-const app = express();
-app.use(express.static('public'));
-app.use(express.json());
-app.use(cors());
-app.use(morgan('dev'));
-app.use(limiter)
+
+//app.use(limiter)
 // app.use(slowLimiter)
 
-// METHODS -------
-
-
-//GET ALL
-app.get(`${URL}`, async (req, res, next) => {
-    try {
-        const result = await pool.query(
-            'SELECT * FROM club'
-        );
-        res.status(200).send(result.rows);
+//CLUSTERING IMPLEMENTED
+if (cluster.isPrimary) {
+    const numCPUs = os.cpus().length;
+    console.log(`Master process is running. Forking ${numCPUs} workers...`);
+    for (let i = 0; i < numCPUs; i++) {
+        cluster.fork();
     }
-    catch (error) {
-        next(error)
-    }
-})
+    cluster.on('exit', (worker, code, signal) => {
+        console.log(`Worker ${worker.process.pid} died. Forking another worker...`);
+        cluster.fork();
+    });
+} else {
 
-//GET ONE
-app.get(`${URL}/:id`, async (req, res, next) => {
-    try {
-        const id = parseInt(req.params.id);
-        console.log(id);
-        if (isNaN(id)) {
-            const error = new Error('Not found');
-            error.status = 404;
-            throw error;
+    const app = express();
+    app.use(express.static('public'));
+    app.use(express.json());
+    app.use(cors());
+    app.use(morgan('dev'));
+
+    // METHODS -------
+
+    //GET ALL
+    app.get(`${URL}`, async (req, res, next) => {
+        try {
+            const result = await pool.query(
+                'SELECT * FROM club'
+            );
+            res.status(200).send(result.rows);
         }
-        console.log(`${id}`);
-        const result = await pool.query(
-            `SELECT * FROM club WHERE id = ${id}`
-        );
-        if (result.rows.length === 0) {
-            const error = new Error('Not found');
-            error.status = 404;
-            throw error;
+        catch (error) {
+            next(error)
         }
-        res.status(200).send(result.rows);
-    }
-    catch (error) {
-        next(error);
-    }
-})
+    })
 
-//CREATE
-app.post(`${URL}`, async (req, res, next) => {
-    try {
-        const { image_urls, title, price, sale_price, left_hand, loft, custom_options } = req.body;
-        //TODO: create error handling as applicable
-        /* if (!XXXXXX) {
-            const error = new Error('Not found');
-            error.status = 404;
-            throw error;
-        } */
-        const result = await pool.query(
-            `INSERT INTO club (image_urls, title, price, sale_price, left_hand, loft, custom_options) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-            [image_urls, title, price, sale_price, left_hand, loft, custom_options]
-        )
-        res.status(201).send(result.rows);
-    }
-    catch (error) {
-        next(error);
-    }
-})
-
-//UPDATE
-app.patch(`${URL}/:id`, async (req, res, next) => {
-    try {
-        const id = parseInt(req.params.id);
-        if (isNaN(id)) {
-            const error = new Error('Not found');
-            error.status = 404;
-            throw(error);
+    //GET ONE
+    app.get(`${URL}/:id`, async (req, res, next) => {
+        try {
+            const id = parseInt(req.params.id);
+            console.log(id);
+            if (isNaN(id)) {
+                const error = new Error('Not found');
+                error.status = 404;
+                throw error;
+            }
+            console.log(`${id}`);
+            const result = await pool.query(
+                `SELECT * FROM club WHERE id = ${id}`
+            );
+            if (result.rows.length === 0) {
+                const error = new Error('Not found');
+                error.status = 404;
+                throw error;
+            }
+            res.status(200).send(result.rows);
         }
-        const { image_urls, title, price, sale_price, left_hand, loft, custom_options } = req.body;
-        const result = await pool.query(
-            `UPDATE club SET image_urls = $1, title = $2, price = $3, sale_price = $4, left_hand = $5, loft = $6, custom_options =$7 WHERE id = $8 RETURNING *`, 
-            [id]
-        );
-        res.status(200).send(result.rows);
-    }
-    catch (error) {
-        next(error);
-    }
-})
-
-//DELETE
-app.delete(`${URL}/:id`, async (req, res, next) => {
-    try {
-        const id = parseInt(req.params.id);
-        if (isNaN(id)) {
-            const error = new Error('Not found');
-            error.status = 404;
-            throw error;
+        catch (error) {
+            next(error);
         }
-        const result = await pool.query(
-            `DELETE FROM club WHERE id = $1 RETURNING *`,
-            [id]
-        );
-        if (result.rows.length === 0) {
-            const error = new Error('Not found');
-            error.status = 404;
-            throw error;
+    })
+
+    //CREATE
+    app.post(`${URL}`, async (req, res, next) => {
+        try {
+            const { image_urls, title, price, sale_price, left_hand, loft, custom_options } = req.body;
+            //TODO: create error handling as applicable
+            /* if (!XXXXXX) {
+                const error = new Error('Not found');
+                error.status = 404;
+                throw error;
+            } */
+            const result = await pool.query(
+                `INSERT INTO club (image_urls, title, price, sale_price, left_hand, loft, custom_options) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+                [image_urls, title, price, sale_price, left_hand, loft, custom_options]
+            )
+            res.status(201).send(result.rows);
         }
-        res.status(200).send(result.rows);
-    }
-    catch (error) {
-        next(error)
-    }
-})
+        catch (error) {
+            next(error);
+        }
+    })
 
-//ERROR handling
-app.use((error, req, res, next) => {
-    res.status(error.status).send({error: error.message});
-})
+    //UPDATE
+    app.patch(`${URL}/:id`, async (req, res, next) => {
+        try {
+            const id = parseInt(req.params.id);
+            if (isNaN(id)) {
+                const error = new Error('Not found');
+                error.status = 404;
+                throw(error);
+            }
+            const { image_urls, title, price, sale_price, left_hand, loft, custom_options } = req.body;
+            const result = await pool.query(
+                `UPDATE club SET image_urls = $1, title = $2, price = $3, sale_price = $4, left_hand = $5, loft = $6, custom_options =$7 WHERE id = $8 RETURNING *`, 
+                [id]
+            );
+            res.status(200).send(result.rows);
+        }
+        catch (error) {
+            next(error);
+        }
+    })
 
-// LISTENER ------
+    //DELETE
+    app.delete(`${URL}/:id`, async (req, res, next) => {
+        try {
+            const id = parseInt(req.params.id);
+            if (isNaN(id)) {
+                const error = new Error('Not found');
+                error.status = 404;
+                throw error;
+            }
+            const result = await pool.query(
+                `DELETE FROM club WHERE id = $1 RETURNING *`,
+                [id]
+            );
+            if (result.rows.length === 0) {
+                const error = new Error('Not found');
+                error.status = 404;
+                throw error;
+            }
+            res.status(200).send(result.rows);
+        }
+        catch (error) {
+            next(error)
+        }
+    })
 
-app.listen(PORT, (req, res) => {
-    console.log(`Listening on PORT: ${PORT}`);
-})
+    //ERROR handling
+    app.use((error, req, res, next) => {
+        console.error(error);
+        const statusCode = error.status || 500;
+        res.status(error.status).send({error: error.message});
+    })
+
+    // LISTENER ------
+
+    app.listen(PORT, (req, res) => {
+        console.log(`Listening on PORT: ${PORT}`);
+    })
+}
